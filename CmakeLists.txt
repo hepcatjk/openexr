@@ -2,10 +2,107 @@ CMAKE_MINIMUM_REQUIRED ( VERSION 2.8 )
 
 PROJECT ( openEXR )
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 ##############################################################
-# Output paths
+# Place Libs and exe files in one Output paths
 ##############################################################
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
----
+
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-switch -Wno-tautological-compare -Wno-deprecated-register")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-result")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4275 /wd4267 /wd4244 /wd4477 /wd4996 /wd4800 /wd4334 /wd4251 /wd4305 /wd4302 /wd4311 /wd4018")
+endif()
+
+
+
+##############################################################
+# Zlib Windows
+##############################################################
+
+IF(WIN32)
+  # Build zlib (only on Windows)
+  SET(ZLIB_BUILD_STATIC_LIBS ON CACHE BOOL " " FORCE)
+  SET(ZLIB_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
+  ADD_SUBDIRECTORY(zlib)
+  SET(ZLIB_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/zlib")
+  SET(ZLIB_LIBRARY "${CMAKE_BINARY_DIR}/$(CONFIGURATION)/zlibstatic.lib")
+  SET(ZLIB_ROOT "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
+  SET_PROPERTY(TARGET zlibstatic zlib minigzip example PROPERTY FOLDER "zlib")
+  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/zlib")
+ENDIF()
+
+
+##############################################################
+# ILMBase
+##############################################################
+ADD_SUBDIRECTORY(openexr/IlmBase)
+SET_PROPERTY(TARGET Iex IexMath Half Imath IlmThread HalfTest IexTest IlmThread ImathTest toFloat eLut PROPERTY FOLDER "ILMBase")
+
+
+
+##############################################################
+# 
+##############################################################
+
+include_directories(
+  openexr/IlmBase/Iex
+  openexr/IlmBase/Imath
+  openexr/IlmBase/IlmThread
+  openexr/IlmBase/Half
+  openexr/IlmBase/config
+  openexr/IlmBase/Imath
+  openexr/OpenEXR/config
+  openexr/IlmBase/config
+  ${CMAKE_BINARY_DIR}/zlib
+)
+
+
+IF(WIN32)
+include_directories(
+  openexr/IlmBase/config.windows
+)
+ENDIF()
+
+ IF(WIN32)
+   SET(OPENEXR_LIBS IlmImf Imath Half zlibstatic)
+ ELSE()
+   SET(OPENEXR_LIBS IlmImf Imath Half)
+ ENDIF()
+
+SET(EXR_LIBS Iex IlmImf IlmThread)
+#SET(ILMBASE_PACKAGE_PREFIX "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
+SET(ILMBASE_PACKAGE_PREFIX "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
+
+LINK_DIRECTORIES ("${CMAKE_BINARY_DIR}")
+
+ADD_SUBDIRECTORY(openexr/OpenEXR)
+SET_PROPERTY(TARGET b44ExpLogTable dwaLookups IlmImfUtilTest IlmImfUtil exrenvmap exrheader IlmImfTest exrmakepreview exrmaketiled exrmultipart exrmultiview exrstdattr IlmImf IlmImfExamples IlmImfFuzzTest PROPERTY FOLDER "openEXR")
+
+
+
+add_custom_target(CopyIlmBaseLibs
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_BINARY_DIR}/$(CONFIGURATION)/b44ExpLogTable.exe
+  ${CMAKE_BINARY_DIR}/openexr/OpenEXR/IlmImf/$(CONFIGURATION)/b44ExpLogTable.exe
+   COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_BINARY_DIR}/$(CONFIGURATION)/dwaLookups.exe
+  ${CMAKE_BINARY_DIR}/openexr/OpenEXR/IlmImf/$(CONFIGURATION)/dwaLookups.exe 
+)
+SET_PROPERTY(TARGET CopyIlmBaseLibs b44ExpLogTable dwaLookups IlmImfUtilTest IlmImfUtil exrenvmap exrheader IlmImfTest exrmakepreview exrmaketiled exrmultipart exrmultiview exrstdattr IlmImf IlmImfExamples IlmImfFuzzTest PROPERTY FOLDER "openEXR")
+
+add_dependencies(CopyIlmBaseLibs Iex Imath IlmThread Half)
+add_dependencies(CopyIlmBaseLibs b44ExpLogTable dwaLookups)
+add_dependencies(IlmImf CopyIlmBaseLibs)
+
+SET(ILMBASE_NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
+SET(NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
+SET(BUILD_SHARED_LIBS        OFF CACHE BOOL " " FORCE)
+SET(ILMBASE_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
+ OPTION(BUILD_SHARED_LIBS    "Build Shared Libraries" OFF)
