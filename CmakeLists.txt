@@ -3,13 +3,18 @@ CMAKE_MINIMUM_REQUIRED ( VERSION 2.8 )
 PROJECT ( openEXR )
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+OPTION(OVERRIDE_OUTPUT_DIRECTORY    "Overide default folder for libraries and extecutables" OFF)
+
+
 
 ##############################################################
 # Place Libs and exe files in one Output paths
 ##############################################################
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+if(NOT OVERRIDE_OUTPUT_DIRECTORY)
+  SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+  SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+  SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+endif()
 
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
