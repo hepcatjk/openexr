@@ -40,7 +40,8 @@ IF(WIN32)
   message(STATUS "ZLIB LIBRARY: " ${ZLIB_LIBRARY})
   message(STATUS "ZLIB ROOT: " ${ZLIB_ROOT})
   SET_PROPERTY(TARGET zlibstatic zlib minigzip example PROPERTY FOLDER "zlib")
-  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/zlib")
+  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/zlib")
+  add_definitions(-DWIN32)
 ENDIF()
 
 
@@ -53,9 +54,8 @@ SET_PROPERTY(TARGET Iex IexMath Half Imath IlmThread HalfTest IexTest IlmThread 
 
 
 ##############################################################
-# 
+# OpenEXR
 ##############################################################
-
 include_directories(
   openexr/IlmBase/Iex
   openexr/IlmBase/Imath
@@ -65,7 +65,8 @@ include_directories(
   openexr/IlmBase/Imath
   openexr/OpenEXR/config
   openexr/IlmBase/config
-  ${CMAKE_BINARY_DIR}/zlib
+  ${CMAKE_CURRENT_SOURCE_DIR}/zlib
+  ${CMAKE_CURRENT_BINARY_DIR}/zlib
 )
 
 
