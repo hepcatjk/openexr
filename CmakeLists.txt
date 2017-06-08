@@ -95,10 +95,10 @@ SET_PROPERTY(TARGET b44ExpLogTable dwaLookups IlmImfUtilTest IlmImfUtil exrenvma
 add_custom_target(CopyIlmBaseLibs
   COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_BINARY_DIR}/$(CONFIGURATION)/b44ExpLogTable.exe
-  ${CMAKE_BINARY_DIR}/openexr/OpenEXR/IlmImf/$(CONFIGURATION)/b44ExpLogTable.exe
+  ${CMAKE_CURRENT_BINARY_DIR}/openexr/OpenEXR/IlmImf/$(CONFIGURATION)/b44ExpLogTable.exe
    COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_BINARY_DIR}/$(CONFIGURATION)/dwaLookups.exe
-  ${CMAKE_BINARY_DIR}/openexr/OpenEXR/IlmImf/$(CONFIGURATION)/dwaLookups.exe 
+  ${CMAKE_CURRENT_BINARY_DIR}/openexr/OpenEXR/IlmImf/$(CONFIGURATION)/dwaLookups.exe 
 )
 SET_PROPERTY(TARGET CopyIlmBaseLibs b44ExpLogTable dwaLookups IlmImfUtilTest IlmImfUtil exrenvmap exrheader IlmImfTest exrmakepreview exrmaketiled exrmultipart exrmultiview exrstdattr IlmImf IlmImfExamples IlmImfFuzzTest PROPERTY FOLDER "openEXR")
 
