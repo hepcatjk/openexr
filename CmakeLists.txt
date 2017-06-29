@@ -55,7 +55,7 @@ ENDIF()
 ##############################################################
 ADD_SUBDIRECTORY(openexr/IlmBase)
 SET_PROPERTY(TARGET Iex IexMath Half Imath IlmThread HalfTest IexTest IlmThread ImathTest toFloat eLut PROPERTY FOLDER "ILMBase")
-
+SET(ILMBASE_NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
 
 
 ##############################################################
@@ -112,7 +112,7 @@ add_dependencies(CopyIlmBaseLibs Iex Imath IlmThread Half)
 add_dependencies(CopyIlmBaseLibs b44ExpLogTable dwaLookups)
 add_dependencies(IlmImf CopyIlmBaseLibs)
 
-SET(ILMBASE_NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
+
 SET(NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
 SET(BUILD_SHARED_LIBS        OFF CACHE BOOL " " FORCE)
 SET(ILMBASE_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
