@@ -53,9 +53,10 @@ ENDIF()
 ##############################################################
 # ILMBase
 ##############################################################
+OPTION (NAMESPACE_VERSIONING "Namespace Versioning" OFF)
+OPTION (BUILD_SHARED_LIBS "Namespace Versioning" OFF)
 ADD_SUBDIRECTORY(openexr/IlmBase)
 SET_PROPERTY(TARGET Iex IexMath Half Imath IlmThread HalfTest IexTest IlmThread ImathTest toFloat eLut PROPERTY FOLDER "ILMBase")
-SET(ILMBASE_NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
 
 
 ##############################################################
@@ -92,6 +93,8 @@ SET(EXR_LIBS Iex IlmImf IlmThread)
 SET(ILMBASE_PACKAGE_PREFIX "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
 
 LINK_DIRECTORIES ("${CMAKE_BINARY_DIR}")
+SET(BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
+SET(NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
 
 ADD_SUBDIRECTORY(openexr/OpenEXR)
 SET_PROPERTY(TARGET b44ExpLogTable dwaLookups IlmImfUtilTest IlmImfUtil exrenvmap exrheader IlmImfTest exrmakepreview exrmaketiled exrmultipart exrmultiview exrstdattr IlmImf IlmImfExamples IlmImfFuzzTest PROPERTY FOLDER "openEXR")
@@ -111,9 +114,3 @@ SET_PROPERTY(TARGET CopyIlmBaseLibs b44ExpLogTable dwaLookups IlmImfUtilTest Ilm
 add_dependencies(CopyIlmBaseLibs Iex Imath IlmThread Half)
 add_dependencies(CopyIlmBaseLibs b44ExpLogTable dwaLookups)
 add_dependencies(IlmImf CopyIlmBaseLibs)
-
-
-SET(NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
-SET(BUILD_SHARED_LIBS        OFF CACHE BOOL " " FORCE)
-SET(ILMBASE_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
-OPTION(BUILD_SHARED_LIBS    "Build Shared Libraries" OFF)
