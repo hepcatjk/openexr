@@ -79,7 +79,12 @@ include_directories(
 IF(WIN32)
 include_directories(
   openexr/IlmBase/config.windows
-)
+  )
+ELSE()
+include_directories(
+  ${CMAKE_BINARY_DIR}/openexr/OpenEXR/config 
+  ${CMAKE_BINARY_DIR}/openexr/IlmBase/config
+  )
 ENDIF()
 
  IF(WIN32)
@@ -89,7 +94,6 @@ ENDIF()
  ENDIF()
 
 SET(EXR_LIBS Iex IlmImf IlmThread)
-#SET(ILMBASE_PACKAGE_PREFIX "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
 SET(ILMBASE_PACKAGE_PREFIX "${CMAKE_BINARY_DIR}/$(CONFIGURATION)")
 
 LINK_DIRECTORIES ("${CMAKE_BINARY_DIR}")
@@ -100,7 +104,7 @@ ADD_SUBDIRECTORY(openexr/OpenEXR)
 SET_PROPERTY(TARGET b44ExpLogTable dwaLookups IlmImfUtilTest IlmImfUtil exrenvmap exrheader IlmImfTest exrmakepreview exrmaketiled exrmultipart exrmultiview exrstdattr IlmImf IlmImfExamples IlmImfFuzzTest PROPERTY FOLDER "openEXR")
 
 
-
+IF(WIN32)
 add_custom_target(CopyIlmBaseLibs
   COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_BINARY_DIR}/$(CONFIGURATION)/b44ExpLogTable.exe
@@ -109,6 +113,16 @@ add_custom_target(CopyIlmBaseLibs
   ${CMAKE_BINARY_DIR}/$(CONFIGURATION)/dwaLookups.exe
   ${CMAKE_CURRENT_BINARY_DIR}/openexr/OpenEXR/IlmImf/$(CONFIGURATION)/dwaLookups.exe 
 )
+ELSE()
+add_custom_target(CopyIlmBaseLibs
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_BINARY_DIR}/b44ExpLogTable
+  ${CMAKE_CURRENT_BINARY_DIR}/openexr/OpenEXR/IlmImf/b44ExpLogTable
+   COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_BINARY_DIR}/dwaLookups
+  ${CMAKE_CURRENT_BINARY_DIR}/openexr/OpenEXR/IlmImf/dwaLookups
+)
+ENDIF()
 SET_PROPERTY(TARGET CopyIlmBaseLibs b44ExpLogTable dwaLookups IlmImfUtilTest IlmImfUtil exrenvmap exrheader IlmImfTest exrmakepreview exrmaketiled exrmultipart exrmultiview exrstdattr IlmImf IlmImfExamples IlmImfFuzzTest PROPERTY FOLDER "openEXR")
 
 add_dependencies(CopyIlmBaseLibs Iex Imath IlmThread Half)
